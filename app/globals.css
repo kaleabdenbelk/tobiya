@@ -1,5 +1,4 @@
-@import "tailwindcss" source(none);
-@source "../src";
+@import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
@@ -19,9 +18,10 @@
  */
 
 @theme inline {
-  --font-display: "Manrope", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-manrope);
+  --font-sans: var(--font-dm-sans);
   --color-cream: var(--cream);
+  --color-offwhite: var(--offwhite);
   --color-ink: var(--ink);
   --color-ink-soft: var(--ink-soft);
   --color-forest: var(--forest);
@@ -72,6 +72,7 @@
 :root {
   --radius: 0.625rem;
   --cream: #f6f1e9;
+  --offwhite: #faf7f0;
   --ink: #172522;
   --ink-soft: #5e6461;
   --forest: #1d302b;
