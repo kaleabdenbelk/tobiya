@@ -28,7 +28,7 @@ const displayRole = (p: Person) =>
 
 const tagline = (p: Person) =>
   p.approvalStatus === "approved"
-    ? p.specialization || p.bio || ""
+    ? p.specialization || p.bio || "A member of Tobiya's professional consultancy team."
     : "Profile details pending company approval.";
 
 /** Explicit replaceable slot shown until a company-approved portrait exists. */
