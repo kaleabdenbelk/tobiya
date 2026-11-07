@@ -1,23 +1,19 @@
-"use client";
-
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ChevronDown } from "lucide-react";
-import { cn } from "cn";
+import { ArrowRight } from "lucide-react";
 
 /**
  * Section 4 — Services and capabilities.
  *
- * An interactive editorial composition: a numbered service selector on the left
- * and a single large photographic display on the right that crossfades when a
- * service is selected. On mobile the selector becomes a stacked accordion with
- * the associated image and description inline.
+ * Three discipline cards (Architectural, Engineering, Construction Management)
+ * shown together so every service is always visible with its title and
+ * description. Earlier versions displayed a single service at a time, which
+ * made the other two appear to be missing.
  *
- * Service categories and descriptions are working copy based on Tobiya's public
- * record and must be confirmed by Tobiya before publication. The images are
- * atmospheric illustrations for the disciplines, not depictions of completed
- * Tobiya projects.
+ * Service categories and descriptions are working copy based on Tobiya's
+ * public record and must be confirmed by Tobiya before publication. The images
+ * are atmospheric illustrations for the disciplines, not depictions of
+ * completed Tobiya projects.
  */
 const services = [
   {
@@ -44,9 +40,6 @@ const services = [
 ];
 
 export function Services() {
-  const [active, setActive] = useState(0);
-  const current = services[active];
-
   return (
     <section id="services" className="scroll-mt-24 bg-offwhite py-28 md:py-40">
       <div className="mx-auto max-w-[1200px] px-6 md:px-[5vw]">
@@ -64,126 +57,33 @@ export function Services() {
           </p>
         </div>
 
-        <div className="mt-16 grid gap-10 md:grid-cols-12 md:gap-14">
-          {/* Desktop selector */}
-          <div className="hidden md:col-span-5 md:block">
-            {services.map((item, i) => (
-              <button
-                key={item.n}
-                type="button"
-                onClick={() => setActive(i)}
-                aria-pressed={i === active}
-                className={cn(
-                  "group flex w-full items-baseline gap-6 border-t border-line py-7 text-left transition-colors duration-300 last:border-b focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forest",
-                  i === active ? "text-ink" : "text-ink-soft hover:text-ink",
-                )}
-              >
-                <span
-                  className={cn(
-                    "font-display text-sm tabular-nums transition-colors duration-300",
-                    i === active ? "text-forest" : "text-ink-soft/60",
-                  )}
-                >
+        <div className="mt-16 grid gap-10 md:grid-cols-3 md:gap-10">
+          {services.map((item) => (
+            <div key={item.n}>
+              <div className="relative aspect-[3/2] overflow-hidden rounded-lg bg-line">
+                <Image
+                  src={item.img}
+                  alt={item.alt}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+
+              <div className="mt-7 flex items-baseline gap-4">
+                <span className="grid size-10 shrink-0 place-items-center rounded-full border border-ink/25 bg-transparent font-display text-sm font-semibold text-ink">
                   {item.n}
                 </span>
-                <span
-                  className={cn(
-                    "font-display text-[clamp(20px,2vw,28px)] tracking-[-0.02em] transition-all duration-300",
-                    i === active ? "font-semibold" : "font-normal",
-                  )}
-                >
+                <h3 className="font-display text-[clamp(18px,1.8vw,22px)] font-semibold tracking-[-0.02em] text-ink">
                   {item.title}
-                </span>
-                <span
-                  aria-hidden
-                  className={cn(
-                    "ml-auto mt-1 size-2 shrink-0 rounded-full bg-forest transition-opacity duration-300",
-                    i === active ? "opacity-100" : "opacity-0",
-                  )}
-                />
-              </button>
-            ))}
-          </div>
-
-          {/* Mobile accordion */}
-          <div className="divide-y divide-line md:hidden">
-            {services.map((item, i) => (
-              <div key={item.n}>
-                <button
-                  type="button"
-                  onClick={() => setActive(i)}
-                  aria-expanded={i === active}
-                  className="flex w-full items-baseline justify-between gap-4 py-6 text-left"
-                >
-                  <span className="flex items-baseline gap-4">
-                    <span className="font-display text-xs tabular-nums text-ink-soft/60">
-                      {item.n}
-                    </span>
-                    <span
-                      className={cn(
-                        "font-display text-lg tracking-[-0.02em]",
-                        i === active ? "font-semibold text-ink" : "font-medium text-ink",
-                      )}
-                    >
-                      {item.title}
-                    </span>
-                  </span>
-                  <ChevronDown
-                    aria-hidden
-                    className={cn(
-                      "size-5 shrink-0 text-ink-soft transition-transform duration-300",
-                      i === active && "rotate-180",
-                    )}
-                  />
-                </button>
-                {i === active && (
-                  <div className="pb-8">
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-line">
-                      <Image
-                        src={item.img}
-                        alt={item.alt}
-                        fill
-                        sizes="100vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <p className="mt-5 max-w-xl text-[15px] leading-[1.75] text-ink-soft">
-                      {item.desc}
-                    </p>
-                  </div>
-                )}
+                </h3>
               </div>
-            ))}
-          </div>
 
-          {/* Desktop visual display */}
-          <div className="hidden md:col-span-7 md:block">
-            <div className="relative aspect-[3/2] overflow-hidden bg-line">
-              {services.map((item, i) => (
-                <div
-                  key={item.n}
-                  className={cn(
-                    "absolute inset-0 transition-opacity duration-700 ease-out",
-                    i === active ? "opacity-100" : "pointer-events-none opacity-0",
-                  )}
-                >
-                  <Image
-                    src={item.img}
-                    alt={item.alt}
-                    fill
-                    sizes="(min-width: 768px) 55vw"
-                    className="object-cover"
-                  />
-                </div>
-              ))}
+              <p className="mt-4 text-[15px] leading-[1.75] text-ink-soft">
+                {item.desc}
+              </p>
             </div>
-            <p
-              key={current.n}
-              className="animate-fade mt-7 max-w-xl text-base leading-[1.75] text-ink-soft"
-            >
-              {current.desc}
-            </p>
-          </div>
+          ))}
         </div>
 
         <Link

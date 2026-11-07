@@ -4,8 +4,6 @@ import { VisualChapter } from "@/components/VisualChapter";
 import { Services } from "@/components/Services";
 import { ExpertiseTransition } from "@/components/ExpertiseTransition";
 import { Projects } from "@/components/Projects";
-import { Approach } from "@/components/Approach";
-import { People } from "@/components/People";
 import { Insights } from "@/components/Insights";
 import { Contact } from "@/components/Contact";
 import { Footer } from "@/components/Footer";
@@ -19,9 +17,10 @@ export default function Home() {
       {/* <Services /> */}
       <ExpertiseTransition />
       <Projects />
-      {/* <Approach /> */}
-      <People />
       <Insights />
+      {/* <Approach /> */}
+      <Services />
+      {/* <People /> */}
       <Contact />
       <Footer />
     </main>

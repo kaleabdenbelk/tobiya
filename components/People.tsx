@@ -120,35 +120,7 @@ export function People() {
           ))}
         </section>
 
-        {/* Typographic roster */}
-        <section className="mt-20 border-t border-line pt-10 md:mt-28">
-          <div className="mb-6 text-[11px] font-semibold uppercase tracking-wider text-ink-soft">
-            Roster
-          </div>
-          <ul>
-            {people.map((m, i) => (
-              <li
-                key={m.id}
-                onMouseEnter={() => setHover(i)}
-                onMouseLeave={() => setHover(null)}
-                className={cn(
-                  "grid grid-cols-[auto_minmax(0,1fr)] items-baseline gap-4 border-b border-line py-4 transition-opacity duration-300 sm:grid-cols-[3rem_minmax(0,1fr)_auto]",
-                  hover !== null && hover !== i && "opacity-30",
-                )}
-              >
-                <span className="text-[11px] tabular-nums text-ink-soft">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <span className="truncate font-display text-[clamp(28px,5vw,56px)] font-semibold leading-[0.95] tracking-[-0.03em] text-ink">
-                  {displayName(m)}
-                </span>
-                <span className="col-start-2 text-[11px] uppercase tracking-wider text-ink-soft sm:col-start-auto">
-                  {displayRole(m)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
+       
       </div>
     </section>
   );
