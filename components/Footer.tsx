@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { contact } from "@/lib/contact";
 
 const YEAR = 2026;
 
@@ -38,12 +39,16 @@ export function Footer() {
 
         <div className="text-sm text-cream/60">
           <a
-            href="mailto:hello@example.com"
-            className="transition-colors hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream"
+            href={`mailto:${contact.email}`}
+            className="block transition-colors hover:text-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream"
           >
-            hello@example.com
+            {contact.email}
           </a>
-          <p className="mt-2">© {YEAR} Tobiya Consulting Architects and Engineers</p>
+          <span className="mt-1 block">{contact.phone}</span>
+          <span className="mt-1 block">
+            {contact.city}, {contact.country}
+          </span>
+          <p className="mt-3">© {YEAR} Tobiya Consulting Architects and Engineers</p>
         </div>
       </div>
     </footer>

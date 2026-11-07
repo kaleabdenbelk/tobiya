@@ -1,12 +1,12 @@
 import { InquiryForm } from "./InquiryForm";
+import { contact } from "@/lib/contact";
 
 /**
  * Section 9 — Contact.
  *
- * A spacious closing composition on a deep forest-green background. Contact
- * details are not yet verified, so only a mail link (placeholder address) is
- * shown alongside the enquiry form. The form submitts honestly via a pre-filled
- * email draft.
+ * A spacious closing composition on a deep forest-green background. Client-
+ * supplied contact details (email, phone, location) are shown alongside the
+ * enquiry form. The form submits honestly via a pre-filled email draft.
  */
 export function Contact() {
   return (
@@ -25,14 +25,40 @@ export function Contact() {
             Tobiya.
           </p>
 
-          <div className="mt-10">
-            <a
-              href="mailto:hello@example.com"
-              className="inline-flex items-center gap-2 text-[15px] font-medium text-cream underline decoration-cream/40 underline-offset-4 transition-colors hover:decoration-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream"
-            >
-              hello@example.com
-            </a>
-          </div>
+          <dl className="mt-10 text-[15px]">
+            <div className="flex items-baseline gap-6 border-t border-cream/15 py-4 first:border-t-0 first:pt-0">
+              <dt className="w-24 shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/50">
+                Email
+              </dt>
+              <dd>
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="text-cream underline decoration-cream/40 underline-offset-4 transition-colors hover:decoration-cream focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-cream"
+                >
+                  {contact.email}
+                </a>
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-6 border-t border-cream/15 py-4">
+              <dt className="w-24 shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/50">
+                Phone
+              </dt>
+              <dd className="text-cream">
+                {contact.phone}
+                {contact.phonePlaceholder && (
+                  <span className="ml-2 text-[12px] text-cream/45">(digits to be confirmed)</span>
+                )}
+              </dd>
+            </div>
+            <div className="flex items-baseline gap-6 border-t border-cream/15 py-4">
+              <dt className="w-24 shrink-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/50">
+                Office
+              </dt>
+              <dd className="text-cream">
+                {contact.city}, {contact.country}
+              </dd>
+            </div>
+          </dl>
         </div>
 
         <div className="md:col-span-6 md:col-start-7">
