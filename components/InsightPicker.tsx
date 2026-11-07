@@ -1,18 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { featuredInsight, perspectives, type Insight } from "@/lib/insights";
 import { cn } from "cn";
 
 /**
- * Interactive Insights composition.
+ * Interactive Insights composition — scroll-driven.
  *
- * The selected perspective is the main content on the left; the remaining
- * perspectives sit in a scroll-snap vertical picker on the right. Scrolling
- * (or clicking / using arrow keys) through the picker swaps the main content.
+ * The selected perspective is presented as the main content in a sticky left
+ * panel. On the right, the perspectives are laid out in the page flow; as the
+ * visitor scrolls, an IntersectionObserver keeps the panel in sync with the
+ * perspective currently in view.
+ *
  * AUTHENTICITY — drafts still link as "in preparation" until approved.
  */
 
@@ -51,105 +52,44 @@ function InsightLink({ insight }: { insight: Insight }) {
 }
 
 export function InsightPicker() {
-  const [active, setActive] = useState(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const ticking = useRef(false);
-  const centred = useRef(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const computeActive = useCallback(() => {
-    const cont = containerRef.current;
-    if (!cont) return;
-    const contRect = cont.getBoundingClientRect();
-    const center = contRect.top + contRect.height / 2;
-    let best = 0;
-    let bestDist = Infinity;
-    itemRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      const d = Math.abs(r.top + r.height / 2 - center);
-      if (d < bestDist) {
-        bestDist = d;
-        best = i;
-      }
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const index = stepRefs.current.findIndex((ref) => ref === entry.target);
+            if (index !== -1) setActiveStep(index);
+          }
+        });
+      },
+      { threshold: 0.5, rootMargin: "-30% 0px -30% 0px" },
+    );
+
+    stepRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
     });
-    setActive((cur) => (cur === best ? cur : best));
+    return () => observer.disconnect();
   }, []);
 
-  const handleScroll = useCallback(() => {
-    if (ticking.current) return;
-    ticking.current = true;
-    requestAnimationFrame(() => {
-      computeActive();
-      ticking.current = false;
-    });
-  }, [computeActive]);
-
-  const scrollToItem = useCallback(
-    (i: number) => {
-      const cont = containerRef.current;
-      const el = itemRefs.current[i];
-      if (!cont || !el) return;
-      const contRect = cont.getBoundingClientRect();
-      const elRect = el.getBoundingClientRect();
-      const offset = elRect.top + elRect.height / 2 - (contRect.top + contRect.height / 2);
-      cont.scrollBy({ top: offset, behavior: "smooth" });
-      setActive(i);
-    },
-    [],
-  );
-
-  /* Centre the first item once so the wheel starts in a stable position. */
-  useEffect(() => {
-    if (centred.current) return;
-    centred.current = true;
-    const raf = requestAnimationFrame(() => scrollToItem(0));
-    return () => cancelAnimationFrame(raf);
-  }, [scrollToItem]);
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      scrollToItem(Math.min(active + 1, picks.length - 1));
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      scrollToItem(Math.max(active - 1, 0));
-    }
-  };
-
-  const current = picks[active];
+  const current = picks[activeStep];
 
   return (
-    <div className="grid gap-8 md:grid-cols-12 md:gap-12">
-      {/* Main content — selected perspective */}
-      <div className="md:col-span-7">
-        <div key={current.id} className="animate-fade">
-          {current.image && (
-            <div className="overflow-hidden bg-line">
-              <div className="relative aspect-[16/10]">
-                <Image
-                  src={current.image}
-                  alt={current.alt ?? ""}
-                  fill
-                  sizes="(min-width: 1024px) 58vw, 100vw"
-                  className="object-cover"
-                />
-              </div>
-            </div>
-          )}
-          {current.caption && (
-            <p className="mt-3 text-[13px] text-ink-soft/70">{current.caption}</p>
-          )}
-
-          <div className="mt-8">
+    <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      {/* Main content — sticky, text-led */}
+      <div className="lg:col-span-5">
+        <div className="lg:sticky lg:top-28 lg:min-h-[440px]">
+          <div key={current.id} className="animate-fade">
             <DevMarker />
             <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
               {current.category}
             </p>
-            <h3 className="mt-3 font-display text-[clamp(26px,3vw,38px)] font-semibold leading-[1.1] tracking-[-0.03em] text-ink">
+            <h3 className="mt-4 font-display text-[clamp(26px,3vw,38px)] font-semibold leading-[1.1] tracking-[-0.03em] text-ink">
               {current.title}
             </h3>
-            <div className="mt-5 space-y-4">
+            <div className="mt-6 space-y-4">
               {current.description.map((p, i) => (
                 <p key={i} className="text-base leading-[1.75] text-ink-soft">
                   {p}
@@ -163,57 +103,59 @@ export function InsightPicker() {
         </div>
       </div>
 
-      {/* Wheel picker — scroll-snap vertical list */}
-      <div className="md:col-span-4 md:col-start-9">
-        <div
-          ref={containerRef}
-          onScroll={handleScroll}
-          onKeyDown={onKeyDown}
-          tabIndex={0}
-          role="listbox"
-          aria-label="Select a perspective"
-          className="h-[460px] snap-y snap-mandatory overflow-y-auto rounded-lg border border-line bg-cream/40 px-2 pb-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forest [scrollbar-color:var(--line)_transparent] [scrollbar-width:thin]"
-        >
-          {picks.map((p, i) => (
-            <button
+      {/* Scrollable perspectives */}
+      <div className="space-y-16 lg:col-span-6 lg:col-start-7 lg:space-y-24">
+        {picks.map((p, i) => {
+          const isActive = i === activeStep;
+          return (
+            <div
               key={p.id}
               ref={(el) => {
-                itemRefs.current[i] = el;
+                stepRefs.current[i] = el;
               }}
-              type="button"
-              role="option"
-              aria-selected={i === active}
-              onClick={() => scrollToItem(i)}
               className={cn(
-                "block w-full snap-center border-b border-line px-4 py-7 text-left transition-colors duration-300",
-                i === active ? "bg-cream text-ink" : "text-ink-soft hover:bg-cream/60",
+                "transition-all duration-1000 ease-out",
+                isActive
+                  ? "translate-y-0 opacity-100"
+                  : i < activeStep
+                    ? "-translate-y-6 opacity-40"
+                    : "translate-y-6 opacity-40",
               )}
             >
-              <span className="font-display text-xs tabular-nums text-ink-soft/60">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span
-                className={cn(
-                  "mt-2 block text-[11px] font-semibold uppercase tracking-[0.14em]",
-                  i === active ? "text-forest" : "text-ink-soft",
-                )}
-              >
-                {p.category}
-              </span>
-              <span
-                className={cn(
-                  "mt-1.5 block font-display leading-snug tracking-[-0.01em]",
-                  i === active ? "font-semibold" : "font-medium",
-                )}
-              >
-                {p.title}
-              </span>
-            </button>
-          ))}
-        </div>
-        <p className="mt-3 text-center text-[12px] text-ink-soft/60">
-          Scroll to explore perspectives
-        </p>
+              <div className="flex items-start gap-5">
+                <span
+                  className={cn(
+                    "grid size-12 shrink-0 place-items-center rounded-full border font-display text-base font-semibold transition-all duration-700",
+                    isActive
+                      ? "scale-105 border-forest bg-forest text-primary-foreground"
+                      : "border-line text-ink-soft",
+                  )}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-soft">
+                    {p.category}
+                  </p>
+                  <h3
+                    className={cn(
+                      "mt-2 font-display text-[clamp(20px,2.2vw,27px)] leading-[1.15] tracking-[-0.025em] transition-colors duration-700",
+                      isActive ? "font-semibold text-ink" : "font-medium text-ink-soft",
+                    )}
+                  >
+                    {p.title}
+                  </h3>
+                  <p className="mt-3 max-w-[52ch] text-[15px] leading-[1.75] text-ink-soft">
+                    {p.description[0]}
+                  </p>
+                  <div className="mt-4">
+                    <InsightLink insight={p} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
