@@ -6,11 +6,10 @@ import { InsightPicker } from "./InsightPicker";
 /**
  * Section 8 — Insights & Resources.
  *
- * The whole section sits inside a flowing forest-green background (echoing the
- * visual chapter): a pinned background layer is revealed as the section flows
- * in from above, and all content is rendered directly on it in light type.
- * A linger area lets the background flow naturally into the dark Contact
- * section. Purely typographic — no imagery beyond the featured insight photo.
+ * A self-contained forest-green section. A short gradient at the top blends
+ * from the section above into the green, so the colour flows down the page
+ * without overlapping the previous section. All content renders inside the
+ * green in light type.
  *
  * AUTHENTICITY — The current records are development placeholders. Draft links
  * render as "in preparation". Resources are only shown when an approved
@@ -82,44 +81,25 @@ function ResourcesBlock() {
 
 export function Insights() {
   return (
-    <div className="relative">
-      {/* Pinned background layer — revealed as the section flows in from above */}
-      <div className="sticky top-0 -mb-[100svh] h-[100svh] w-full overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg, var(--forest) 0%, #0c1a15 55%, #07120e 100%)",
-          }}
-        >
-          <span
-            aria-hidden
-            className="pointer-events-none absolute -right-6 bottom-4 select-none font-display text-[24vw] font-semibold leading-none tracking-[-0.045em] text-white/[0.05] lg:right-2 lg:bottom-8 lg:text-[280px]"
-          >
-            Perspectives
-          </span>
+    <section id="insights" className="relative scroll-mt-24 bg-forest">
+      {/* Smooth flow into the green from the section above */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-offwhite to-forest md:h-36"
+      />
+
+      {/* Anchor target for the nav "Resources" link */}
+      <div id="resources" className="scroll-mt-24" aria-hidden />
+
+      <div className="relative mx-auto max-w-[1200px] px-6 pt-20 pb-28 md:px-[5vw] md:pt-28 md:pb-40">
+        <div className="border-t border-white/15 pt-14 md:pt-20">
+          <InsightPicker />
+        </div>
+
+        <div className="mt-14 md:mt-20">
+          <ResourcesBlock />
         </div>
       </div>
-
-      {/* Content — rendered inside the flowing background */}
-      <section id="insights" className="relative z-10 scroll-mt-24">
-        {/* Anchor target for the nav "Resources" link */}
-        <div id="resources" className="scroll-mt-24" aria-hidden />
-
-        <div className="mx-auto max-w-[1200px] px-6 py-28 md:px-[5vw] md:py-40">
-          <div className="border-t border-white/15 pt-14 md:pt-20">
-            <InsightPicker />
-          </div>
-
-          <div className="mt-14 md:mt-20">
-            <ResourcesBlock />
-          </div>
-        </div>
-      </section>
-
-      {/* Linger area — a little green flows into the Contact section */}
-      <div className="relative h-[16vh]" aria-hidden />
-    </div>
+    </section>
   );
 }
