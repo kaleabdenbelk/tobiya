@@ -86,27 +86,8 @@ export function Insights() {
       <div id="resources" className="scroll-mt-24" aria-hidden />
 
       <div className="mx-auto max-w-[1200px] px-6 md:px-[5vw]">
-        {/* Intro — spaced editorial two-column */}
-        <div className="grid gap-8 md:grid-cols-12 md:gap-8">
-          <div className="md:col-span-5">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
-              07 / Insights &amp; resources
-            </p>
-            <h2 className="mt-6 font-display text-[clamp(30px,4vw,48px)] font-semibold leading-[1.08] tracking-[-0.035em] text-ink">
-              Ideas and perspectives on the built environment
-            </h2>
-          </div>
-          <div className="md:col-span-6 md:col-start-7">
-            <p className="max-w-[52ch] text-base leading-[1.75] text-ink-soft">
-              Explore perspectives on architecture, engineering and the decisions
-              that shape building projects, alongside useful information about
-              Tobiya Consulting.
-            </p>
-          </div>
-        </div>
-
-        {/* Interactive composition — main content + picker */}
-        <div className="mt-16 border-t border-line pt-14 md:mt-20 md:pt-16">
+        {/* Interactive composition — constant intro + scrollable perspectives */}
+        <div className="border-t border-line pt-14 md:pt-20">
           <InsightPicker />
         </div>
 

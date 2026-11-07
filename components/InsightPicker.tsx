@@ -9,23 +9,15 @@ import { cn } from "cn";
 /**
  * Interactive Insights composition — scroll-driven.
  *
- * The selected perspective is presented as the main content in a sticky left
- * panel. On the right, the perspectives are laid out in the page flow; as the
- * visitor scrolls, an IntersectionObserver keeps the panel in sync with the
+ * The left column is a constant, sticky section introduction (headline +
+ * supporting copy). The right column lays out the perspectives in the page
+ * flow; as the visitor scrolls, an IntersectionObserver highlights the
  * perspective currently in view.
  *
  * AUTHENTICITY — drafts still link as "in preparation" until approved.
  */
 
 const picks: Insight[] = [featuredInsight, ...perspectives];
-
-function DevMarker() {
-  return (
-    <span className="inline-flex items-center rounded-full border border-dashed border-ink/30 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-ink/60">
-      Development preview
-    </span>
-  );
-}
 
 function InsightLink({ insight }: { insight: Insight }) {
   const base =
@@ -74,32 +66,22 @@ export function InsightPicker() {
     return () => observer.disconnect();
   }, []);
 
-  const current = picks[activeStep];
-
   return (
     <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
-      {/* Main content — sticky, text-led */}
+      {/* Constant section introduction — sticky on desktop */}
       <div className="lg:col-span-5">
-        <div className="lg:sticky lg:top-28 lg:min-h-[440px]">
-          <div key={current.id} className="animate-fade">
-            <DevMarker />
-            <p className="mt-6 text-[11px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
-              {current.category}
-            </p>
-            <h3 className="mt-4 font-display text-[clamp(26px,3vw,38px)] font-semibold leading-[1.1] tracking-[-0.03em] text-ink">
-              {current.title}
-            </h3>
-            <div className="mt-6 space-y-4">
-              {current.description.map((p, i) => (
-                <p key={i} className="text-base leading-[1.75] text-ink-soft">
-                  {p}
-                </p>
-              ))}
-            </div>
-            <div className="mt-8">
-              <InsightLink insight={current} />
-            </div>
-          </div>
+        <div className="lg:sticky lg:top-28">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-ink-soft">
+            07 / Insights &amp; resources
+          </p>
+          <h2 className="mt-6 font-display text-[clamp(30px,4vw,48px)] font-semibold leading-[1.08] tracking-[-0.035em] text-ink">
+            Ideas and perspectives on the built environment
+          </h2>
+          <p className="mt-6 max-w-[44ch] text-base leading-[1.75] text-ink-soft">
+            Explore perspectives on architecture, engineering and the decisions
+            that shape building projects, alongside useful information about
+            Tobiya Consulting.
+          </p>
         </div>
       </div>
 
