@@ -16,10 +16,10 @@ export default function Home() {
       <Nav />
       <Hero />
       <VisualChapter />
-      <Services />
+      {/* <Services /> */}
       <ExpertiseTransition />
       <Projects />
-      <Approach />
+      {/* <Approach /> */}
       <People />
       <Insights />
       <Contact />
